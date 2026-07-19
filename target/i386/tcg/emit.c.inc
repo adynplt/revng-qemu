@@ -1497,7 +1497,10 @@ static inline void gen_pinsr(DisasContext *s, CPUX86State *env, X86DecodedInsn *
     int val = decode->immediate & mask;
 
     if (decode->op[1].offset != decode->op[0].offset) {
-        assert(vec_len == 16);
+        if (vec_len != 16) {
+            gen_illegal_opcode(s);
+            return;
+        }
         gen_store_sse(s, decode, decode->op[1].offset);
     }
 
