@@ -415,7 +415,8 @@ static const X86OpEntry opcodes_0F38_00toEF[240] = {
     [0x37] = X86_OP_ENTRY3(PCMPGTQ,   V,x,  H,x,       W,x,   vex4 cpuid(SSE42) avx2_256 p_66),
 
     [0x40] = X86_OP_ENTRY3(PMULLD,      V,x,  H,x,       W,x,  vex4 cpuid(SSE41) avx2_256 p_66),
-    [0x41] = X86_OP_ENTRY3(VPHMINPOSUW, V,dq, None,None, W,dq, vex4 cpuid(SSE41) p_66),
+    [0x41] = X86_OP_ENTRY3(VPHMINPOSUW, V, dq, None, None, W, dq,
+                           vex4 chk(VEX128) cpuid(SSE41) p_66),
     /* Listed incorrectly as type 4 */
     [0x45] = X86_OP_ENTRY3(VPSRLV,      V,x,  H,x,       W,x,  vex6 cpuid(AVX2) p_66),
     [0x46] = X86_OP_ENTRY3(VPSRAV,      V,x,  H,x,       W,x,  vex6 chk(W0) cpuid(AVX2) p_66),
@@ -518,7 +519,8 @@ static const X86OpEntry opcodes_0F38_00toEF[240] = {
     [0xcc] = X86_OP_ENTRY2(SHA256MSG1,  V,dq, W,dq, cpuid(SHA_NI)),
     [0xcd] = X86_OP_ENTRY2(SHA256MSG2,  V,dq, W,dq, cpuid(SHA_NI)),
 
-    [0xdb] = X86_OP_ENTRY3(VAESIMC,     V,dq, None,None, W,dq, vex4 cpuid(AES) p_66),
+    [0xdb] = X86_OP_ENTRY3(VAESIMC,     V, dq, None, None, W, dq,
+                           vex4 chk(VEX128) cpuid(AES) p_66),
     [0xdc] = X86_OP_ENTRY3(VAESENC,     V,x,  H,x,       W,x,  vex4 cpuid(AES) p_66),
     [0xdd] = X86_OP_ENTRY3(VAESENCLAST, V,x,  H,x,       W,x,  vex4 cpuid(AES) p_66),
     [0xde] = X86_OP_ENTRY3(VAESDEC,     V,x,  H,x,       W,x,  vex4 cpuid(AES) p_66),
@@ -599,8 +601,10 @@ static void decode_0F38(DisasContext *s, CPUX86State *env, X86OpEntry *entry, ui
 static void decode_VINSERTPS(DisasContext *s, CPUX86State *env, X86OpEntry *entry, uint8_t *b)
 {
     static const X86OpEntry
-        vinsertps_reg = X86_OP_ENTRY4(VINSERTPS_r, V,dq, H,dq, U,dq, vex5 cpuid(SSE41) p_66),
-        vinsertps_mem = X86_OP_ENTRY4(VINSERTPS_m, V,dq, H,dq, M,d,  vex5 cpuid(SSE41) p_66);
+        vinsertps_reg = X86_OP_ENTRY4(VINSERTPS_r, V, dq, H, dq, U, dq,
+                                      vex5 chk(VEX128) cpuid(SSE41) p_66),
+        vinsertps_mem = X86_OP_ENTRY4(VINSERTPS_m, V, dq, H, dq, M, d,
+                                      vex5 chk(VEX128) cpuid(SSE41) p_66);
 
     int modrm = get_modrm(s, env);
     *entry = (modrm >> 6) == 3 ? vinsertps_reg : vinsertps_mem;
@@ -671,7 +675,8 @@ static const X86OpEntry opcodes_0F3A[256] = {
 
     [0xcc] = X86_OP_ENTRY3(SHA1RNDS4,  V,dq, W,dq, I,b,  cpuid(SHA_NI)),
 
-    [0xdf] = X86_OP_ENTRY3(VAESKEYGEN, V,dq, W,dq, I,b,  vex4 cpuid(AES) p_66),
+    [0xdf] = X86_OP_ENTRY3(VAESKEYGEN, V, dq, W, dq, I, b,
+                           vex4 chk(VEX128) cpuid(AES) p_66),
 
     [0xF0] = X86_OP_ENTRY3(RORX, G,y, E,y, I,b, vex13 cpuid(BMI2) p_f2),
 };

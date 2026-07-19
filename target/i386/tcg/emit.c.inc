@@ -1879,7 +1879,10 @@ static void gen_SHRX(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 static void gen_VAESKEYGEN(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
     TCGv_i32 imm = tcg_constant8u_i32(decode->immediate);
-    assert(!s->vex_l);
+    if (s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
     gen_helper_aeskeygenassist_xmm(tcg_env, OP_PTR0, OP_PTR1, imm);
 }
 
@@ -1891,7 +1894,10 @@ static void gen_STMXCSR(DisasContext *s, CPUX86State *env, X86DecodedInsn *decod
 
 static void gen_VAESIMC(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
-    assert(!s->vex_l);
+    if (s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
     gen_helper_aesimc_xmm(tcg_env, OP_PTR0, OP_PTR2);
 }
 
@@ -2111,7 +2117,10 @@ static void gen_vinsertps(DisasContext *s, CPUX86State *env, X86DecodedInsn *dec
     int new_mask = (val & 15) | (1 << dest_word);
     int vec_len = 16;
 
-    assert(!s->vex_l);
+    if (s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
 
     if (new_mask == 15) {
         /* All zeroes except possibly for the inserted element */
@@ -2314,21 +2323,24 @@ static void gen_VPERM2x128(DisasContext *s, CPUX86State *env, X86DecodedInsn *de
 
 static void gen_VPHMINPOSUW(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
-    assert(!s->vex_l);
+    if (s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
     gen_helper_phminposuw_xmm(tcg_env, OP_PTR0, OP_PTR2);
 }
 
 static void gen_VROUNDSD(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
     TCGv_i32 imm = tcg_constant8u_i32(decode->immediate);
-    assert(!s->vex_l);
+    /* VEX.L is ignored for scalar VROUND instructions. */
     gen_helper_roundsd_xmm(tcg_env, OP_PTR0, OP_PTR1, OP_PTR2, imm);
 }
 
 static void gen_VROUNDSS(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
     TCGv_i32 imm = tcg_constant8u_i32(decode->immediate);
-    assert(!s->vex_l);
+    /* VEX.L is ignored for scalar VROUND instructions. */
     gen_helper_roundss_xmm(tcg_env, OP_PTR0, OP_PTR1, OP_PTR2, imm);
 }
 
