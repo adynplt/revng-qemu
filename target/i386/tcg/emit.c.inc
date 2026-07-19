@@ -2310,14 +2310,20 @@ static void gen_VPMASKMOV_st(DisasContext *s, CPUX86State *env, X86DecodedInsn *
 
 static void gen_VPERMD(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
-    assert(s->vex_l);
+    if (!s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
     gen_helper_vpermd_ymm(OP_PTR0, OP_PTR1, OP_PTR2);
 }
 
 static void gen_VPERM2x128(DisasContext *s, CPUX86State *env, X86DecodedInsn *decode)
 {
     TCGv_i32 imm = tcg_constant8u_i32(decode->immediate);
-    assert(s->vex_l);
+    if (!s->vex_l) {
+        gen_illegal_opcode(s);
+        return;
+    }
     gen_helper_vpermdq_ymm(OP_PTR0, OP_PTR1, OP_PTR2, imm);
 }
 

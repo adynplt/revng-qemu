@@ -1,5 +1,5 @@
 /*
- * Verify that 128-bit-only VEX instructions reject VEX.L=1.
+ * Verify that fixed-width VEX instructions reject reserved VEX.L values.
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -51,6 +51,16 @@ static void invalid_vaeskeygen(void)
     asm volatile(".byte 0xc4, 0xe3, 0x7d, 0xdf, 0xc0, 0x00");
 }
 
+static void invalid_vpermd(void)
+{
+    asm volatile(".byte 0xc4, 0xe2, 0x79, 0x36, 0xc0");
+}
+
+static void invalid_vperm2x128(void)
+{
+    asm volatile(".byte 0xc4, 0xe3, 0x79, 0x06, 0xc0, 0x00");
+}
+
 static void expect_sigill(void (*instruction)(void), const char *name)
 {
     if (sigsetjmp(sigill_env, 1) == 0) {
@@ -76,5 +86,7 @@ int main(void)
     expect_sigill(invalid_vphminposuw, "VPHMINPOSUW");
     expect_sigill(invalid_vaesimc, "VAESIMC");
     expect_sigill(invalid_vaeskeygen, "VAESKEYGEN");
+    expect_sigill(invalid_vpermd, "VPERMD");
+    expect_sigill(invalid_vperm2x128, "VPERM2x128");
     return EXIT_SUCCESS;
 }
